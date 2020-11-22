@@ -9,21 +9,24 @@ var temperature = 0;
 var humidity = 0;
 var windSpeed = 0;
 var uvIndex = 0;
-var fiveDays = "";
-var apiKey = "&appid=72b683573979f675e34ed4c06ed32896"
 var weatherPrefix = "http://api.openweathermap.org/data/2.5/weather?units=imperial&q="
 var fiveDaysPrefix = "http://api.openweathermap.org/data/2.5/forecast?units=imperial&q="
 var uvPrefix = "http://api.openweathermap.org/data/2.5/uvi?"
 var oneCallPrefix = "http://api.openweathermap.org/data/2.5/onecall?"
 var iconURL = 'https://openweathermap.org/img/wn/';
 var searchHistory = {};
-const apikey = "&appid=72b683573979f675e34ed4c06ed32896";
+const apiKey = "&appid=72b683573979f675e34ed4c06ed32896";
 
 var iconName = '';
 
 
 //////////////////////////// FUNCTION ////////////////////////////////////////
 
+function initLocalStorage() {
+    localStorage.setItem('searchHistory', '[]');
+}
+
+// render search record city and country
 function renderSearch() {
     var searchHistoryObj = JSON.parse(localStorage.getItem('searchHistory'));
     if (searchHistoryObj) {
@@ -34,17 +37,12 @@ function renderSearch() {
 
 }
 
-function initLocalStorage() {
-    localStorage.setItem('searchHistory', '[]');
-}
-
 function saveLocalStorage(searchHistoryObj) {
     localStorage.setItem('searchHistory', JSON.stringify(searchHistoryObj));
 }
 
-
+// add search city input into search record array
 function addSearch(cityName, country) {
-
     var obj = {
         "cityName": cityName,
         "country": country
@@ -70,12 +68,8 @@ function addSearch(cityName, country) {
         searchHistoryObj.push(obj);
     }
 
-    // searchHistoryObj.sort((b, a) => {
-    //   return a.country - b.country;
-    // });
-
     // if length is greater than 8 remove the first search by using shift method
-    if (searchHistoryObj.length > 2) {
+    if (searchHistoryObj.length > 8) {
         searchHistoryObj.shift();
     }
 
@@ -84,12 +78,12 @@ function addSearch(cityName, country) {
 
 
 
-
+// use ajax to get weather uvi and forecase information 
 function getWeather(cityName) {
     // using cityName to temp humidity windspeed and latitude and longtitude
-    var urlWeatherTest = weatherPrefix + cityName + apikey;
+    var urlWeatherTest = weatherPrefix + cityName + apiKey;
     $.ajax({
-        url: weatherPrefix + cityName + apikey,
+        url: weatherPrefix + cityName + apiKey,
         method: "GET",
         error: function (err) {
             alert("The city was not found. Please check your spelling")
@@ -108,16 +102,16 @@ function getWeather(cityName) {
 
             // since ajax is asynchronous need to move both Uvi and Fivedays request to be after weather to pass the latitute and longtitude value
             // using latitude and lontitude to get uvIndex data
-            var urlUviTest = uvPrefix + apikey + "&lat=" + cityLa + "&lon=" + cityLong;
+            var urlUviTest = uvPrefix + apiKey + "&lat=" + cityLa + "&lon=" + cityLong;
 
             $.ajax({
-                url: uvPrefix + apikey + "&lat=" + cityLa + "&lon=" + cityLong,
+                url: uvPrefix + apiKey + "&lat=" + cityLa + "&lon=" + cityLong,
                 method: "GET",
             })
                 .then(function (response) {
                     uvIndex = response.value;
                 })
-            // user cityName to get fiveDays forecase
+            // user cityName to get fiveDays forecast
             var urlFiveDaysTest = fiveDaysPrefix + cityName + apiKey;
             $.ajax({
                 url: fiveDaysPrefix + cityName + apiKey,
@@ -132,13 +126,13 @@ function getWeather(cityName) {
         })
 }
 
+// to convert unix time from response
 function convertUnixTime(unixTime) {
     return moment(unixTime).format('MM/DD/YYYY, h:mm:ss a');
 }
 
+// to display weather information in the main section
 function currentWeather(cityName) {
-
-
     $('#cityName').text(cityName + ',' + country + ' ' + '(' + convertUnixTime(Date.now()) + ')');
 
     addSearch(cityName, country);
@@ -151,6 +145,7 @@ function currentWeather(cityName) {
     $('#uvIndex').text('UV Index: ' + uvIndex);
 }
 
+// to display forecast
 function getFiveDaysData(response) {
     var fiveDaysArray = response.list;
     var dayNumber = 1;
@@ -163,9 +158,6 @@ function getFiveDaysData(response) {
         ++dayNumber;
     }
 }
-
-
-
 
 
 //////////////////////////// EXECUTION ////////////////////////////////////////
@@ -198,8 +190,8 @@ $("input").keypress(function (event) {
 });
 
 // if user click on the search histor
-$("table").on("click",".recent", function(event) {
+$("table").on("click", ".recent", function (event) {
     event.preventDefault();
     getWeather($(this).text());
-  });
-  
+});
+
