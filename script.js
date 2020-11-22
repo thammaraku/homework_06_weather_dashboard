@@ -133,7 +133,7 @@ function convertUnixTime(unixTime) {
 
 // to display weather information in the main section
 function currentWeather(cityName) {
-    $('#cityName').text(cityName + ',' + country + ' ' + '(' + convertUnixTime(Date.now()) + ')');
+    $('#cityName').text(cityName + ', ' + country + ' ' + '(' + convertUnixTime(Date.now()) + ')');
 
     addSearch(cityName, country);
     renderSearch();
