@@ -9,10 +9,10 @@ var temperature = 0;
 var humidity = 0;
 var windSpeed = 0;
 var uvIndex = 0;
-var weatherPrefix = "http://api.openweathermap.org/data/2.5/weather?units=imperial&q="
-var fiveDaysPrefix = "http://api.openweathermap.org/data/2.5/forecast?units=imperial&q="
-var uvPrefix = "http://api.openweathermap.org/data/2.5/uvi?"
-var oneCallPrefix = "http://api.openweathermap.org/data/2.5/onecall?"
+var weatherPrefix = "https://api.openweathermap.org/data/2.5/weather?units=imperial&q="
+var fiveDaysPrefix = "https://api.openweathermap.org/data/2.5/forecast?units=imperial&q="
+var uvPrefix = "https://api.openweathermap.org/data/2.5/uvi?"
+var oneCallPrefix = "https://api.openweathermap.org/data/2.5/onecall?"
 var iconURL = 'https://openweathermap.org/img/wn/';
 var searchHistory = {};
 const apiKey = "&appid=72b683573979f675e34ed4c06ed32896";
